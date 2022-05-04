@@ -1,0 +1,8 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII>
+        a lv2:Plugin, lv2:DelayPlugin ;
+        lv2:binary <bent_delay_mkII.so> ;
+        rdfs:seeAlso <bent_delay_mkII.ttl> .
