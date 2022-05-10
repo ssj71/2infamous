@@ -61,13 +61,13 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
     
     for (i=0;i<nframes;i++)
     {
-        out[i] = in[i] + buf[w-dly];
+        out[i] = in[i] + buf[(uint16_t)(w-dly)];
         buf[w] = fb*out[i];
         w++;
         if(!(w&BLOCKMASK))
         {
             //new block, new lfo out
-            fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + 2.0*fbl)/200.0; 
+            fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + 2.0*fbl)/2.0;
             CLAMP(fb, -1.0, 1.0);
             dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000;
             CLAMP(dly, 0, 0xffff);
