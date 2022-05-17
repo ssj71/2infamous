@@ -16,7 +16,9 @@ typedef struct _BENTDELAY_MK_II
 {
     uint16_t w; //write index
     uint16_t dly;
+    float dstep;
     float fb;
+    float fbstep;
     float *buf;
     float sample_rate;
 
@@ -40,7 +42,8 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
     plug_t* plug = (plug_t*)handle;
     float *in, *out, *buf, fb, fbl, fbh;
     uint16_t i,w;
-    int32_t dly;
+    float dly;
+    float dstep, fbstep;
 
     in = plug->in_p;
     out = plug->out_p;
@@ -50,7 +53,9 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
 
     w = plug->w;
     fb = plug->fb; 
+    fbstep = plug->fbstep;
     dly = plug->dly;
+    dstep = plug->dstep;
 
     if(fbl>fbh)
     {
@@ -63,20 +68,26 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
     {
         out[i] = in[i] + buf[(uint16_t)(w-dly)];
         buf[w] = fb*out[i];
+        dly += dstep;
+        fb += fbstep;
         w++;
         if(!(w&BLOCKMASK))
         {
             //new block, new lfo out
-            fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + 2.0*fbl)/2.0;
-            CLAMP(fb, -1.0, 1.0);
-            dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000;
-            CLAMP(dly, 0, 0xffff);
+            plug->fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + 2.0*fbl)/2.0;
+            CLAMP(plug->fb, -1.0, 1.0);
+            fbstep = (plug->fb - fb)/(float)(BLOCKMASK+1.0);
+            plug->dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000;
+            CLAMP(plug->dly, 0, 0xffff);
+            dstep = (plug->dly - dly)/(float)(BLOCKMASK+1.0);
         }
     } 
 
     plug->w = w;
     plug->fb = fb;
+    plug->fbstep = fbstep;
     plug->dly = dly;
+    plug->dstep = dstep;
 
     return;
 }
@@ -91,7 +102,9 @@ LV2_Handle init_bent_delay(const LV2_Descriptor *descriptor,double sample_rate, 
     plug->buf = (float*)malloc(tmp*sizeof(float));
     plug->w = 0;
     plug->fb = 0;
+    plug->fbstep = 0;
     plug->dly = 0;
+    plug->dstep = 0;
 
     randlfo_init(&plug->dlfo,sample_rate, BLOCKMASK+1);
     randlfo_init(&plug->fblfo,sample_rate, BLOCKMASK+1);
