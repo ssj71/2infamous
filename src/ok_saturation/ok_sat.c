@@ -9,11 +9,9 @@
 #define PORT_CONNECT(N,PORT) case N: plug->PORT = (float*)data; break
 #define CLAMP(X,MIN,MAX) X = X<MIN?MIN:X>MAX?MAX:X
 
-#define BLOCKMASK 0xff
-
 typedef struct _OK_SAT
 {
-    float gn; //gain, which approximately models temperature, sitting at 1.0 when below the rails, but heating up when the 
+    float gn; //gain, which approximately models temperature, sitting at 1.0 when below the rails, but heating up when the signal goes above the threshold, reducing gain
 
     float *in_p;
     float *out_p;
@@ -30,9 +28,10 @@ void run_ok_sat(LV2_Handle handle, uint32_t nframes)
     const float thresh = .61-.6**plug->sat_p;
     const float filt = .8; //speed of the "heating"
     const float filtdn = .9; //speed of the "heating" on the lower half of the wave
-    const float gainout = *plug->test2_p;
     const float smash = 1.0+10.0**plug->sat_p; //gain reducton due to heat
     const float smashdn = smash/2.0; //gain reducton due to heat on the lower half of the wave
+
+    const float gainout = *plug->test2_p;
 
     float *in = plug->in_p;
     float * out = plug->out_p;
@@ -42,17 +41,12 @@ void run_ok_sat(LV2_Handle handle, uint32_t nframes)
         out[i] = gn*in[i];
         if(in[i] > thresh)
         {
-            //we want the target to be in E(0,1]
             // heat up, lowering gain
-            //gn = filt*gn + (1.0-filt)*(thresh/in[i]); //this works ok, harsher than I'd like
-            //was either reall clipping or had no effect, want smoother transition
-            //gn = filt*gn + (1.0-filt)*(.5); constant is much worse though
             gn = filt*gn + (1.0-filt)*(((smash-1.0)*thresh+in[i])/(in[i]*smash));
         }
         else if(in[i] < -thresh)
         {
-            // heat up, lowering gain
-            //gn = filt*gn + (1.0-filt)*(-thresh/in[i]);
+            // heat up, lowering gain (though not as dramatically on this side of the signal)
             gn = filtdn*gn + (1.0-filtdn)*(((1.0-smashdn)*thresh+in[i])/(in[i]*smashdn));
         }
         else
