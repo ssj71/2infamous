@@ -27,47 +27,40 @@ typedef struct _BENTDELAY_MK_II
 
     float *in_p;
     float *out_p;
+    float *on_p;
     float *dly_p;
     float *drange_p;
     float *dfreq_p;
     float *fbfreq_p;
-    float *fbl_p;
-    float *fbh_p;
+    float *fb_p;
+    float *fbrange_p;
 } plug_t;
 
 
 void run_bent_delay(LV2_Handle handle, uint32_t nframes)
 {
-    //TODO: add bypass port that keeps tails
     plug_t* plug = (plug_t*)handle;
-    float *in, *out, *buf, fb, fbl, fbh;
-    uint16_t i,w;
-    float dly;
-    float dstep, fbstep;
 
-    in = plug->in_p;
-    out = plug->out_p;
-    buf = plug->buf;
-    fbl = *plug->fbl_p;
-    fbh = *plug->fbh_p;
+    float* in = plug->in_p;
+    float* out = plug->out_p;
+    const float byp = 1.0-*plug->on_p;
+    float fbl = *plug->fb_p - *plug->fbrange_p;
+    float fbh = *plug->fb_p + *plug->fbrange_p;
 
-    w = plug->w;
-    fb = plug->fb; 
-    fbstep = plug->fbstep;
-    dly = plug->dly;
-    dstep = plug->dstep;
+    float* buf = plug->buf;
+    uint16_t w = plug->w;
+    float fb = plug->fb;
+    float fbstep = plug->fbstep;
+    float dly = plug->dly;
+    float dstep = plug->dstep;
 
-    if(fbl>fbh)
-    {
-        float tmp = fbl;
-        fbl = fbh;
-        fbh = tmp;
-    }
+    CLAMP(fbl, -1.0, 1.0);
+    CLAMP(fbh, -1.0, 1.0);
     
-    for (i=0;i<nframes;i++)
+    for (uint16_t i=0;i<nframes;i++)
     {
         out[i] = in[i] + buf[(uint16_t)(w-dly)];
-        buf[w] = fb*out[i];
+        buf[w] = fb*(out[i] - byp*in[i]);
         dly += dstep;
         fb += fbstep;
         w++;
@@ -77,7 +70,7 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
             plug->fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + 2.0*fbl)/2.0;
             CLAMP(plug->fb, -1.0, 1.0);
             fbstep = (plug->fb - fb)/(float)(BLOCKMASK+1.0);
-            plug->dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000;
+            plug->dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000.0;
             CLAMP(plug->dly, 0, 0xffff);
             dstep = (plug->dly - dly)/(float)(BLOCKMASK+1.0);
         }
@@ -106,8 +99,8 @@ LV2_Handle init_bent_delay(const LV2_Descriptor *descriptor,double sample_rate, 
     plug->dly = 0;
     plug->dstep = 0;
 
-    randlfo_init(&plug->dlfo,sample_rate, BLOCKMASK+1);
-    randlfo_init(&plug->fblfo,sample_rate, BLOCKMASK+1);
+    randlfo_init(&plug->dlfo, sample_rate, BLOCKMASK+1);
+    randlfo_init(&plug->fblfo, sample_rate, BLOCKMASK+1);
 
     plug->sample_rate = sample_rate;
 
@@ -121,12 +114,13 @@ void connect_bent_delay_ports(LV2_Handle handle, uint32_t port, void *data)
     {
         PORT_CONNECT(0,in_p);
         PORT_CONNECT(1,out_p);
-        PORT_CONNECT(2,dly_p);
-        PORT_CONNECT(3,drange_p);
-        PORT_CONNECT(4,dfreq_p);
-        PORT_CONNECT(5,fbfreq_p);
-        PORT_CONNECT(6,fbl_p);
-        PORT_CONNECT(7,fbh_p);
+        PORT_CONNECT(2,on_p);
+        PORT_CONNECT(3,dly_p);
+        PORT_CONNECT(4,drange_p);
+        PORT_CONNECT(5,dfreq_p);
+        PORT_CONNECT(6,fb_p);
+        PORT_CONNECT(7,fbrange_p);
+        PORT_CONNECT(8,fbfreq_p);
     default:
         puts("UNKNOWN PORT YO!!");
     }
