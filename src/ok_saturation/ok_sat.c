@@ -78,6 +78,7 @@ void connect_ok_sat_ports(LV2_Handle handle, uint32_t port, void *data)
         PORT_CONNECT(2,sat_p);
         PORT_CONNECT(3,test_p);
         PORT_CONNECT(4,test2_p);
+        PORT_CONNECT(5,outctl_p);
     default:
         puts("UNKNOWN PORT YO!!");
     }
