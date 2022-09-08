@@ -41,10 +41,11 @@ void run_ok_sat(LV2_Handle handle, uint32_t nframes)
     float pin = plug->pin;
     float pout = plug->pout;
     uint16_t blockcount = plug->bc;
-    const float thresh = .61-.6**plug->sat_p;
+    const float sat = -*plug->sat_p**plug->sat_p + 2**plug->sat_p; //parabolic mapping
+    const float thresh = .401-.4*sat;
     const float filt = .8; //speed of the "heating"
     const float filtdn = .9; //speed of the "heating" on the lower half of the wave
-    const float smash = 1.0+10.0**plug->sat_p; //gain reducton due to heat
+    const float smash = 1.0+11.0*sat; //gain reducton due to heat
     const float smashdn = smash/2.0; //gain reducton due to heat on the lower half of the wave
 
 
@@ -89,7 +90,7 @@ void run_ok_sat(LV2_Handle handle, uint32_t nframes)
                 dgain = 0.0;
             }
             CLAMP(dgain,-.001,.001);
-            fprintf(stderr,"in %f b %f a %f gn %f d %f\n",in[i], pre, pst,gainout,dgain);
+            //fprintf(stderr,"in %f b %f a %f gn %f d %f\n",in[i], pre, pst,gainout,dgain);
         }
         else
         {
