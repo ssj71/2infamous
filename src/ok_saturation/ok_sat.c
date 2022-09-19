@@ -41,7 +41,7 @@ void run_ok_sat(LV2_Handle handle, uint32_t nframes)
     float pin = plug->pin;
     float pout = plug->pout;
     uint16_t blockcount = plug->bc;
-    const float sat = -*plug->sat_p**plug->sat_p + 2**plug->sat_p; //parabolic mapping
+    const float sat = sqrt(*plug->sat_p);
     const float thresh = .401-.4*sat;
     const float filt = .8; //speed of the "heating"
     const float filtdn = .9; //speed of the "heating" on the lower half of the wave
