@@ -23,7 +23,7 @@ void randlfo_init(randlfo_t *lfo, double sample_rate, uint32_t fragsize)
     lfo->y1 = lfo->x1 = 0;
     
     //const vars
-    lfo->ro = 2*sample_rate/fragsize;
+    lfo->ro = 2.0*sample_rate/fragsize;
 }
 
 
@@ -41,10 +41,10 @@ void randlfo_init(randlfo_t *lfo, double sample_rate, uint32_t fragsize)
 float randlfo_out(randlfo_t *lfo, float freq)
 {
     //this is a LPF with cutoff at freq
-    float r = 3*2.0*rand() / (float)RAND_MAX -1.0;//extra 3 factor because lpf seems to need a bit more gain
+    float r = 2.0*(rand() / (float)RAND_MAX) -1.0;
     float a = 2.0*PI*freq;
     float b = 1.0/(lfo->ro+a);
-    float y0 = a*b*(lfo->x1 + r - lfo->y1) + lfo->ro*b*lfo->y1;
+    float y0 = a*b*(lfo->x1 + 3.0*r - lfo->y1) + lfo->ro*b*lfo->y1; //extra 3 factor because lpf seems to need a bit more gain
     //TODO: clamp to [-1,1]?
     //store memory
     lfo->y1 = y0;
