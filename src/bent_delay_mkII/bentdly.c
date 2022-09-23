@@ -67,7 +67,7 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
         if(!(w&BLOCKMASK))
         {
             //new block, new lfo out
-            plug->fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + 2.0*fbl)/2.0;
+            plug->fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + (fbh+fbl))/2.0;
             CLAMP(plug->fb, -1.0, 1.0);
             fbstep = (plug->fb - fb)/(float)(BLOCKMASK+1.0);
             plug->dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000.0;
