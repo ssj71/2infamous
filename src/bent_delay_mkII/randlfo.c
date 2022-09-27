@@ -21,7 +21,7 @@ void randlfo_init(randlfo_t *lfo, double sample_rate, uint32_t fragsize)
     //init states
     srand ((unsigned int) time (NULL));
     lfo->y1 = lfo->x1 = 0;
-    lfo->y2 = lfo->x2 = 0;
+    lfo->c = lfo->s = 0;
     
     //const vars
     lfo->ro = sample_rate/fragsize;
@@ -41,28 +41,28 @@ void randlfo_init(randlfo_t *lfo, double sample_rate, uint32_t fragsize)
 */
 float randlfo_out(randlfo_t *lfo, float freq)
 {
-    //this is a resonant LPF with cutoff at freq
-    const float x0 = 2.0*(rand() / (float)RAND_MAX) -1.0;
-    const float z = .0000001; //damping factor E(0-1]
-    const float w = 2.0*PI*freq;
-    const float T = 1.0/lfo->ro;
-    float g = 60.0/freq; //this is a makeup gain because as the filter cuts off more and more energy the amplitude drops.
-    //if using this for frequencies higher than 10hz you may need to tweak the numerator
-    if(g > 100000)g=100000;
+    float y0;
+    const float end = lfo->ro/(2.0*freq);
+    //at audio rates I'd be worried about jitter but at LFO rates, we'll be fine
+    if(++lfo->c >= end)
+    {
+        lfo->c = 0.0; //counter
+        lfo->x1 = 2.0*(rand() / (float)RAND_MAX) -1.0; //input
+        lfo->s = (lfo->x1 - lfo->y1)*16.0*freq*freq/lfo->ro/lfo->ro; //step
+        y0 = lfo->y1;
+    }
+    else if(lfo->c > end/2.0)
+    {
+        y0 = lfo->y1 + (end-lfo->c)*lfo->s;
+    }
+    else
+    {
+        y0 = lfo->y1 + lfo->c*lfo->s;
+    }
 
-    const float a = w*T;
-    const float b = a*a;
-    const float c = 4.0*z*a;
-    const float d = 1.0/(b + c + 4.0);
-    const float y0 = d*( b*(g*x0 + 2.0*lfo->x1 + lfo->x2) - (b+b-8.0)*lfo->y1 - (b-c+4.0)*lfo->y2);
     //TODO: clamp to [-1,1]?
     //store memory
     lfo->y1 = y0;
-    lfo->x1 = x0;
-    lfo->y2 = lfo->y1;
-    lfo->x2 = lfo->x1;
-    if(y0> 1.0 || y0 < -1.0)
-    fprintf(stderr, "%f, ", y0);
     return y0;
 }
 
