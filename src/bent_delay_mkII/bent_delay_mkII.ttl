@@ -106,6 +106,6 @@
                 lv2:name "Feedback Randomness" ;
                 lv2:default 0.1 ;
                 lv2:minimum 0.0 ;
-                lv2:maximum 5.0 ;
+                lv2:maximum 10.0 ;
                 units:unit units:hz ;
         ].
