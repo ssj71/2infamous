@@ -21,6 +21,10 @@ typedef struct _BENTDELAY_MK_II
     float fbstep;
     float *buf;
     float sample_rate;
+    float wet;
+    float dry;
+    float wstep;
+    float drystep;
 
     randlfo_t dlfo;
     randlfo_t fblfo;
@@ -31,9 +35,10 @@ typedef struct _BENTDELAY_MK_II
     float *dly_p;
     float *drange_p;
     float *dfreq_p;
-    float *fbfreq_p;
     float *fb_p;
     float *fbrange_p;
+    float *fbfreq_p;
+    float *mix_p;
 } plug_t;
 
 
@@ -53,16 +58,22 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
     float fbstep = plug->fbstep;
     float dly = plug->dly;
     float dstep = plug->dstep;
+    float wet = plug->wet;
+    float dry = plug->dry;
+    float wstep = plug->wstep;
+    float drystep = plug->drystep;
 
     CLAMP(fbl, -1.0, 1.0);
     CLAMP(fbh, -1.0, 1.0);
-    
+
     for (uint16_t i=0;i<nframes;i++)
     {
-        out[i] = in[i] + buf[(uint16_t)(w-dly)];
-        buf[w] = fb*(out[i] - byp*in[i]);
+        out[i] = dry*in[i] + wet*buf[(uint16_t)(w-dly)];
+        buf[w] = (1.0-byp)*in[i] + fb*buf[(uint16_t)(w-dly)];
         dly += dstep;
         fb += fbstep;
+        wet += wstep;
+        dry += drystep;
         w++;
         if(!(w&BLOCKMASK))
         {
@@ -73,6 +84,19 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
             plug->dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000.0;
             CLAMP(plug->dly, 0, 0xffff);
             dstep = (plug->dly - dly)/(float)(BLOCKMASK+1.0);
+            CLAMP(dstep,-2.0,2.0);//TODO: not sure about this
+            if(*plug->mix_p < .5)
+            {
+                plug->wet = 2.0**plug->mix_p;
+                plug->dry = 1.0;
+            }
+            else
+            {
+                plug->wet = 1.0;
+                plug->dry = 2.0*(1.0-*plug->mix_p);
+            }
+            wstep = (plug->wet - wet)/(float)(BLOCKMASK+1.0);
+            drystep = (plug->dry - dry)/(float)(BLOCKMASK+1.0);
         }
     } 
 
@@ -81,6 +105,10 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
     plug->fbstep = fbstep;
     plug->dly = dly;
     plug->dstep = dstep;
+    plug->wet = wet;
+    plug->dry = dry;
+    plug->wstep = wstep;
+    plug->drystep = drystep;
 
     return;
 }
@@ -121,6 +149,7 @@ void connect_bent_delay_ports(LV2_Handle handle, uint32_t port, void *data)
         PORT_CONNECT(6,fb_p);
         PORT_CONNECT(7,fbrange_p);
         PORT_CONNECT(8,fbfreq_p);
+        PORT_CONNECT(9,mix_p);
     default:
         puts("UNKNOWN PORT YO!!");
     }

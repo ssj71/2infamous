@@ -108,4 +108,12 @@
                 lv2:minimum 0.0 ;
                 lv2:maximum 20.0 ;
                 units:unit units:hz ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 9 ;
+                lv2:symbol "MIX" ;
+                lv2:name "Wet/Dry Mix" ;
+                lv2:default 0.5 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 1.0 ;
         ].
