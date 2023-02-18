@@ -41,11 +41,26 @@ typedef struct _BENTDELAY_MK_II
     float *mix_p;
 } plug_t;
 
+//cubic interp, using the fact that the index will wrap around perfectly for a uint16_t
+float cubic(float* buf, float i)
+{
+    uint16_t ii = (uint16_t)i-1;
+    float a = buf[ii++];
+    float x = i - ii;
+    float b = buf[ii++];
+    float c = buf[ii++];
+    float d = buf[ii];
+    float out =  b + 0.5 * x*(c - a + x*(2.0*a - 5.0*b + 4.0*c - d + x*(3.0*(b - c) + d - a)));
+    return out;
+
+}
 
 void run_bent_delay(LV2_Handle handle, uint32_t nframes)
 {
     plug_t* plug = (plug_t*)handle;
 
+    float j,m;
+    double tmp;
     float* in = plug->in_p;
     float* out = plug->out_p;
     const float byp = 1.0-*plug->on_p;
@@ -68,8 +83,11 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
 
     for (uint16_t i=0;i<nframes;i++)
     {
-        out[i] = dry*in[i] + wet*buf[(uint16_t)(w-dly)];
-        buf[w] = (1.0-byp)*in[i] + fb*buf[(uint16_t)(w-dly)];
+        //fractional delay
+        j = (uint16_t)(w-dly) + modf(w-dly,&tmp);
+        m = cubic(buf,j);
+        out[i] = dry*in[i] + wet*m;
+        buf[w] = (1.0-byp)*in[i] + fb*m;
         dly += dstep;
         fb += fbstep;
         wet += wstep;
