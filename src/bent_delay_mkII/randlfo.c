@@ -20,8 +20,8 @@ void randlfo_init(randlfo_t *lfo, double sample_rate, uint32_t fragsize)
 {
     //init states
     srand ((unsigned int) time (NULL));
-    lfo->y1 = lfo->x1 = 0;
-    lfo->c = lfo->s = 0;
+    lfo->y1 = lfo->x1 = 0.0;
+    lfo->c = 0;
     
     //const vars
     lfo->ro = sample_rate/fragsize;
@@ -43,21 +43,21 @@ float randlfo_out(randlfo_t *lfo, float freq)
 {
     float y0;
     const float end = lfo->ro/(2.0*freq);
+    const float s = (lfo->x1 - lfo->y1)*16.0*freq*freq/lfo->ro/lfo->ro; //step
     //at audio rates I'd be worried about jitter but at LFO rates, we'll be fine
     if(++lfo->c >= end)
     {
         lfo->c = 0.0; //counter
         lfo->x1 = 2.0*(rand() / (float)RAND_MAX) -1.0; //input
-        lfo->s = (lfo->x1 - lfo->y1)*16.0*freq*freq/lfo->ro/lfo->ro; //step
         y0 = lfo->y1;
     }
     else if(lfo->c > end/2.0)
     {
-        y0 = lfo->y1 + (end-lfo->c)*lfo->s;
+        y0 = lfo->y1 + (end-lfo->c)*s;
     }
     else
     {
-        y0 = lfo->y1 + lfo->c*lfo->s;
+        y0 = lfo->y1 + lfo->c*s;
     }
 
     //TODO: clamp to [-1,1]?

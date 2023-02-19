@@ -8,7 +8,7 @@
 
 typedef struct randlfo_t_
 {
-    float c,s,y1,x1,ro; //memory for filters
+    float c,y1,x1,ro; //memory for filters
 }randlfo_t;
 
 void randlfo_init(randlfo_t *lfo, double sample_rate, uint32_t fragsize);
