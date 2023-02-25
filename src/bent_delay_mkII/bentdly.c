@@ -102,8 +102,7 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
             plug->dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000.0;
             CLAMP(plug->dly, 0, 0xffff);
             dstep = (plug->dly - dly)/(float)(BLOCKMASK+1.0);
-            CLAMP(dstep,-2.0,2.0);//TODO: not sure about this
-            if(*plug->mix_p < .5)
+            if(*plug->mix_p <= .5)
             {
                 plug->wet = 2.0**plug->mix_p;
                 plug->dry = 1.0;
