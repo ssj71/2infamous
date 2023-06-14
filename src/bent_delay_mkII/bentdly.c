@@ -8,7 +8,7 @@
 #include"randlfo.h"
 
 #define PORT_CONNECT(N,PORT) case N: plug->PORT = (float*)data; break
-#define CLAMP(X,MIN,MAX) X = X<MIN?MIN:X>MAX?MAX:X
+#define CLAMP(X,MIN,MAX) X = X<MIN?MIN:(X>MAX?MAX:X)
 
 #define BLOCKMASK 0xff
 
