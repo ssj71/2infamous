@@ -138,11 +138,17 @@ LV2_Handle init_bent_delay(const LV2_Descriptor *descriptor,double sample_rate, 
 
     tmp = 0x10000;
     plug->buf = (float*)malloc(tmp*sizeof(float));
+    for(tmp=0;tmp<0x10000;tmp++)
+	    plug->buf[tmp] = 0.0;
     plug->w = 0;
     plug->fb = 0;
     plug->fbstep = 0;
     plug->dly = 0;
     plug->dstep = 0;
+    plug->wet = 0;
+    plug->wstep = 0;
+    plug->dry = 0;
+    plug->drystep = 0;
 
     randlfo_init(&plug->dlfo, sample_rate, BLOCKMASK+1);
     randlfo_init(&plug->fblfo, sample_rate, BLOCKMASK+1);
