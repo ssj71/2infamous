@@ -63,7 +63,7 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
     double tmp;
     float* in = plug->in_p;
     float* out = plug->out_p;
-    const float byp = 1.0-*plug->on_p;
+    const float on = *plug->on_p>0.0?1.0:0.0;
     float fbl = *plug->fb_p - *plug->fbrange_p;
     float fbh = *plug->fb_p + *plug->fbrange_p;
 
@@ -86,8 +86,8 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
         //fractional delay
         j = (uint16_t)(w-dly) + modf(w-dly,&tmp);
         m = cubic(buf,j);
+        buf[w] = on*in[i] + fb*m;
         out[i] = dry*in[i] + wet*m;
-        buf[w] = (1.0-byp)*in[i] + fb*m;
         dly += dstep;
         fb += fbstep;
         wet += wstep;
