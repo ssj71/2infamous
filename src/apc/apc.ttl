@@ -1,0 +1,77 @@
+@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+@prefix lv2:     <http://lv2plug.in/ns/lv2core#> .
+@prefix lv2ui:   <http://lv2plug.in/ns/extensions/ui#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix lv2atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix lv2midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix lv2time: <http://lv2plug.in/ns/ext/time#> .
+@prefix pg: <http://lv2plug.in/ns/ext/port-groups#> .
+@prefix param: <http://lv2plug.in/ns/ext/parameters#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix pprops: <http://lv2plug.in/ns/ext/port-props#> .
+
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#ataripunkconsole>
+        a lv2:Plugin, lv2:GeneratorPlugin ;
+        doap:name "the infamous atari punk console" ;
+        doap:license <http://opensource.org/licenses/GPL-3.0> ;
+        doap:description "noise maker based on a common dual 555 circuit";
+        doap:maintainer [
+                foaf:name "Spencer Jackson" ;
+                foaf:homepage <http://ssj71.github.io/infamousPlugins> ;
+                foaf:mbox <mailto:ssjackson71@gmail.com> ;
+        ] ;
+        lv2:minorVersion 0 ;
+        lv2:microVersion 1 ;
+        lv2:optionalFeature lv2:hardRTCapable ;
+
+        lv2:port [
+                a lv2:OutputPort, lv2:AudioPort ;
+                lv2:index 0 ;
+                lv2:symbol "OUTPUT" ;
+                lv2:name "Audio Out" ;
+        ] ;
+        lv2:port [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 1 ;
+                lv2:symbol "ENABLE" ;
+                lv2:name "ON" ;
+                lv2:default 0 ;
+                lv2:minimum 0 ;
+                lv2:maximum 1 ;
+                lv2:portProperty lv2:integer ;
+                lv2:portProperty lv2:toggled ;
+                lv2:designation lv2:enabled ;
+        ] ;
+        lv2:port [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index  2 ;
+                lv2:symbol "FREQ" ;
+                lv2:name "1" ;
+                lv2:default 50.0 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 100.0 ;
+                units:unit units:pc ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 3 ;
+                lv2:symbol "PLS" ;
+                lv2:name "2" ;
+                lv2:default 50.0;
+                lv2:minimum 0.0 ;
+                lv2:maximum 100.0 ;
+                units:unit units:pc ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 4 ;
+                lv2:symbol "VOL" ;
+                lv2:name "Volume Trim" ;
+                lv2:default 70.0 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 100.0 ;
+                units:unit units:pc ;
+        ].
