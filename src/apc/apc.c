@@ -54,8 +54,12 @@ void run_apc(LV2_Handle handle, uint32_t nframes)
                 {
                     out = 1.0;
                     //reset phase
-                    phase -= nextrig;
+                    phase -= nextrig + 1;
                     nextrig = trigperiod;
+                    while(pulsexpire >= nextrig)
+                    {
+                        nextrig += trigperiod;
+                    }
                 }
                 plug->out_p[i++] = vol*out;
             }
@@ -71,12 +75,12 @@ void run_apc(LV2_Handle handle, uint32_t nframes)
             else if(out == 1.0)
             {
                 //we are waiting for the pulse to expire
-                uint16_t n = ceil(pulsexpire - phase + i);
+                uint16_t n = i + ceil(pulsexpire - phase);
                 if(n > nframes)
                     n = nframes;
+                phase += n-i;
                 for(;i<n;i++)
                     plug->out_p[i] = vol*out;
-                phase += n;
                 //propogate nextrig in case pulse covers multiple
                 while(phase >= nextrig)
                 {
@@ -87,12 +91,12 @@ void run_apc(LV2_Handle handle, uint32_t nframes)
             else if(out == -1.0)
             {
                 //we are waiting for the next trigger
-                uint16_t n = ceil(nextrig - phase + i);
+                uint16_t n = i + ceil(nextrig - phase);
                 if(n > nframes)
                     n = nframes;
+                phase += n-i;
                 for(;i<n;i++)
                     plug->out_p[i] = vol*out;
-                phase += n;
                 //if not at end of block, next sample should rise
             }
             else
