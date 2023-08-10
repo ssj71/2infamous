@@ -231,7 +231,7 @@
 		pset:value 1.0
 	] , [
 		lv2:symbol "MIX" ;
-		pset:value 0.5
+		pset:value 0.3
 	] , [
 		lv2:symbol "RATE" ;
 		pset:value 15.0
@@ -279,7 +279,7 @@
 		pset:value 100.0
 	] , [
 		lv2:symbol "DELAY_RATE" ;
-		pset:value 0.2
+		pset:value 0.05
 	] , [
 		lv2:symbol "ENABLE" ;
 		pset:value 1.0
