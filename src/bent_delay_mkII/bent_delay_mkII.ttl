@@ -39,6 +39,123 @@
         lv2:port [
                 a lv2:OutputPort, lv2:AudioPort ;
                 lv2:index 1 ;
+                lv2:symbol "OUTPUT_L" ;
+                lv2:name "Audio L Out" ;
+        ] ;
+        lv2:port [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 2 ;
+                lv2:symbol "ENABLE" ;
+                lv2:name "ON" ;
+                lv2:default 1 ;
+                lv2:minimum 0 ;
+                lv2:maximum 1 ;
+                lv2:portProperty lv2:integer ;
+                lv2:portProperty lv2:toggled ;
+                lv2:designation lv2:enabled ;
+        ] ;
+        lv2:port [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index  3 ;
+                lv2:symbol "TIME" ;
+                lv2:name "Delay" ;
+                lv2:default 500.0 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 1400.0 ;
+                units:unit units:ms ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 4 ;
+                lv2:symbol "DELAY_RANGE" ;
+                lv2:name "Bow" ;
+                lv2:default 18.0 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 100.0 ;
+                units:unit units:ms ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 5 ;
+                lv2:symbol "DELAY_RATE" ;
+                lv2:name "Wobble" ;
+                lv2:default 0.2 ;
+                lv2:minimum 0.01 ;
+                lv2:maximum 10.0 ;
+                units:unit units:hz ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 6 ;
+                lv2:symbol "FB_AVG" ;
+                lv2:name "Feedback" ;
+                lv2:default 0.75 ;
+                lv2:minimum -1.0 ;
+                lv2:maximum 1.0 ;
+                units:unit units:coef ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 7 ;
+                lv2:symbol "FB_RANGE" ;
+                lv2:name "Loss/Bleed" ;
+                lv2:default 0.2 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 1.0 ;
+                units:unit units:coef ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 8 ;
+                lv2:symbol "RATE" ;
+                lv2:name "Chop" ;
+                lv2:default 0.3 ;
+                lv2:minimum 0.01 ;
+                lv2:maximum 20.0 ;
+                units:unit units:hz ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 9 ;
+                lv2:symbol "MIX" ;
+                lv2:name "Wet/Dry Mix" ;
+                lv2:default 0.5 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 1.0 ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 10 ;
+                lv2:symbol "STEREO" ;
+                lv2:name "TableTennis" ;
+                lv2:default 0.0 ;
+                lv2:minimum -1.0 ;
+                lv2:maximum 1.0 ;
+        ] ;
+        lv2:port [
+                a lv2:OutputPort, lv2:AudioPort ;
+                lv2:index 11 ;
+                lv2:symbol "OUTPUT_R" ;
+                lv2:name "Audio R Out" ;
+        ].
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono>
+        a lv2:Plugin, lv2:DelayPlugin ;
+        doap:name "the infamous bent delay MK II" ;
+        doap:license <http://opensource.org/licenses/GPL-3.0> ;
+        doap:description "delay with randomly modulated feedback (mono version)";
+        doap:maintainer [
+                foaf:name "Spencer Jackson" ;
+                foaf:homepage <http://ssj71.github.io/infamousPlugins> ;
+                foaf:mbox <mailto:ssjackson71@gmail.com> ;
+        ] ;
+        lv2:minorVersion 0 ;
+        lv2:microVersion 1 ;
+        rdfs:comment "This otherwise basic delay just has a randomly varying feedback" ;
+        lv2:optionalFeature lv2:hardRTCapable ;
+
+        lv2:port [
+                a lv2:InputPort, lv2:AudioPort ;
+                lv2:index 0 ;
+                lv2:symbol "INPUT" ;
+                lv2:name "Audio In" ;
+        ] ;
+        lv2:port [
+                a lv2:OutputPort, lv2:AudioPort ;
+                lv2:index 1 ;
                 lv2:symbol "OUTPUT" ;
                 lv2:name "Audio Out" ;
         ] ;
@@ -121,7 +238,7 @@
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&dfault>
 	a pset:Preset ;
-	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "01 Dfault" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
@@ -151,7 +268,7 @@
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&warm>
 	a pset:Preset ;
-	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "02 warm_delay" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
@@ -182,7 +299,7 @@
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&colour>
 	a pset:Preset ;
-	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "03 slap_of_colour" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
@@ -212,7 +329,7 @@
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&chop_suey>
 	a pset:Preset ;
-	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "04 chop_suey" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
@@ -242,7 +359,7 @@
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&dirty_chorus>
 	a pset:Preset ;
-	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "05 dirty_chorus" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
@@ -272,7 +389,7 @@
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&space_case>
 	a pset:Preset ;
-	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "06 space_case" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
@@ -302,7 +419,7 @@
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&seasick>
 	a pset:Preset ;
-	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "07 seasick" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;

@@ -6,3 +6,8 @@
         a lv2:Plugin, lv2:DelayPlugin ;
         lv2:binary <bent_delay_mkII.so> ;
         rdfs:seeAlso <bent_delay_mkII.ttl> .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono>
+        a lv2:Plugin, lv2:DelayPlugin ;
+        lv2:binary <bent_delay_mkII.so> ;
+        rdfs:seeAlso <bent_delay_mkII.ttl> .

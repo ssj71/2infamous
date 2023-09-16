@@ -12,7 +12,7 @@
 
 #define BLOCKMASK 0xff
 
-typedef struct _BENTDELAY_MK_II
+typedef struct _delayer
 {
     uint16_t w; //write index
     uint16_t dly;
@@ -28,9 +28,15 @@ typedef struct _BENTDELAY_MK_II
 
     randlfo_t dlfo;
     randlfo_t fblfo;
+} delayer_t;
+
+typedef struct _BENTDELAY_MK_II
+{
+    delayer_t *delayer;
 
     float *in_p;
     float *out_p;
+    float *outr_p;
     float *on_p;
     float *dly_p;
     float *drange_p;
@@ -39,6 +45,7 @@ typedef struct _BENTDELAY_MK_II
     float *fbrange_p;
     float *fbfreq_p;
     float *mix_p;
+    float *stereo_p;
 } plug_t;
 
 //cubic interp, using the fact that the index will wrap around perfectly for a uint16_t
@@ -55,28 +62,20 @@ float cubic(float* buf, float i)
 
 }
 
-void run_bent_delay(LV2_Handle handle, uint32_t nframes)
+void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, float on, float mix, float fbl, float fbh, float fbf, float delay, float drange, float df)
 {
-    plug_t* plug = (plug_t*)handle;
-
     float j,m;
     double tmp;
-    float* in = plug->in_p;
-    float* out = plug->out_p;
-    const float on = *plug->on_p>0.0?1.0:0.0;
-    float fbl = *plug->fb_p - *plug->fbrange_p;
-    float fbh = *plug->fb_p + *plug->fbrange_p;
-
-    float* buf = plug->buf;
-    uint16_t w = plug->w;
-    float fb = plug->fb;
-    float fbstep = plug->fbstep;
-    float dly = plug->dly;
-    float dstep = plug->dstep;
-    float wet = plug->wet;
-    float dry = plug->dry;
-    float wstep = plug->wstep;
-    float drystep = plug->drystep;
+    float* buf = delayer->buf;
+    uint16_t w = delayer->w;
+    float fb = delayer->fb;
+    float fbstep = delayer->fbstep;
+    float dly = delayer->dly;
+    float dstep = delayer->dstep;
+    float wet = delayer->wet;
+    float dry = delayer->dry;
+    float wstep = delayer->wstep;
+    float drystep = delayer->drystep;
 
     CLAMP(fbl, -1.0, 1.0);
     CLAMP(fbh, -1.0, 1.0);
@@ -96,37 +95,72 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
         if(!(w&BLOCKMASK))
         {
             //new block, new lfo out
-            plug->fb = ((fbh - fbl)*randlfo_out(&plug->fblfo,*plug->fbfreq_p) + (fbh+fbl))/2.0;
-            CLAMP(plug->fb, -1.0, 1.0);
-            fbstep = (plug->fb - fb)/(float)(BLOCKMASK+1.0);
-            plug->dly = (*plug->drange_p*randlfo_out(&plug->dlfo,*plug->dfreq_p) + *plug->dly_p)*plug->sample_rate/1000.0;
-            CLAMP(plug->dly, 0, 0xffff);
-            dstep = (plug->dly - dly)/(float)(BLOCKMASK+1.0);
-            if(*plug->mix_p <= .5)
+            delayer->fb = ((fbh - fbl)*randlfo_out(&delayer->fblfo,fbf) + (fbh+fbl))/2.0;
+            CLAMP(delayer->fb, -1.0, 1.0);
+            fbstep = (delayer->fb - fb)/(float)(BLOCKMASK+1.0);
+            delayer->dly = (drange*randlfo_out(&delayer->dlfo,df) + delay)*delayer->sample_rate/1000.0;
+            CLAMP(delayer->dly, 0, 0xffff);
+            dstep = (delayer->dly - dly)/(float)(BLOCKMASK+1.0);
+            if(mix <= .5)
             {
-                plug->wet = 2.0**plug->mix_p;
-                plug->dry = 1.0;
+                delayer->wet = 2.0*mix;
+                delayer->dry = 1.0;
             }
             else
             {
-                plug->wet = 1.0;
-                plug->dry = 2.0*(1.0-*plug->mix_p);
+                delayer->wet = 1.0;
+                delayer->dry = 2.0*(1.0-mix);
             }
-            wstep = (plug->wet - wet)/(float)(BLOCKMASK+1.0);
-            drystep = (plug->dry - dry)/(float)(BLOCKMASK+1.0);
+            wstep = (delayer->wet - wet)/(float)(BLOCKMASK+1.0);
+            drystep = (delayer->dry - dry)/(float)(BLOCKMASK+1.0);
         }
     } 
 
-    plug->w = w;
-    plug->fb = fb;
-    plug->fbstep = fbstep;
-    plug->dly = dly;
-    plug->dstep = dstep;
-    plug->wet = wet;
-    plug->dry = dry;
-    plug->wstep = wstep;
-    plug->drystep = drystep;
+    delayer->w = w;
+    delayer->fb = fb;
+    delayer->fbstep = fbstep;
+    delayer->dly = dly;
+    delayer->dstep = dstep;
+    delayer->wet = wet;
+    delayer->dry = dry;
+    delayer->wstep = wstep;
+    delayer->drystep = drystep;
 
+    return;
+}
+
+
+void run_bent_delay(LV2_Handle handle, uint32_t nframes)
+{
+    plug_t* plug = (plug_t*)handle;
+
+    run_delayer(
+        plug->delayer,
+        plug->in_p,
+        plug->out_p,
+        nframes,
+        *plug->on_p>0.0?1.0:0.0,
+        *plug->mix_p,
+        *plug->fb_p - *plug->fbrange_p,
+        *plug->fb_p + *plug->fbrange_p,
+        *plug->fbfreq_p,
+        *plug->dly_p,
+        *plug->drange_p,
+        *plug->dfreq_p);
+    if(plug->stereo_p)
+        run_delayer(
+            &plug->delayer[1],
+            plug->in_p,
+            plug->out_p,
+            nframes,
+            *plug->on_p>0.0?1.0:0.0,
+            *plug->mix_p,
+            *plug->fb_p - *plug->fbrange_p,
+            *plug->fb_p + *plug->fbrange_p,
+            *plug->fbfreq_p,
+            *plug->dly_p*3.0/(3.0-*plug->stereo_p),
+            *plug->drange_p,
+            *plug->dfreq_p);
     return;
 }
 
@@ -135,25 +169,31 @@ LV2_Handle init_bent_delay(const LV2_Descriptor *descriptor,double sample_rate, 
     uint32_t tmp;
 
     plug_t* plug = malloc(sizeof(plug_t));
+    uint8_t l = strlen(descriptor->URI)>76?2:1;
+    plug->delayer = malloc(sizeof(delayer_t)*l);
 
     tmp = 0x10000;
-    plug->buf = (float*)malloc(tmp*sizeof(float));
-    for(tmp=0;tmp<0x10000;tmp++)
-	    plug->buf[tmp] = 0.0;
-    plug->w = 0;
-    plug->fb = 0;
-    plug->fbstep = 0;
-    plug->dly = 0;
-    plug->dstep = 0;
-    plug->wet = 0;
-    plug->wstep = 0;
-    plug->dry = 0;
-    plug->drystep = 0;
+    for(l--;l<255;l--)
+    {
+        plug->delayer[l].buf = (float*)malloc(tmp*sizeof(float));
+        for(tmp=0;tmp<0x10000;tmp++)
+            plug->delayer[l].buf[tmp] = 0.0;
+        plug->delayer[l].w = 0;
+        plug->delayer[l].fb = 0;
+        plug->delayer[l].fbstep = 0;
+        plug->delayer[l].dly = 0;
+        plug->delayer[l].dstep = 0;
+        plug->delayer[l].wet = 0;
+        plug->delayer[l].wstep = 0;
+        plug->delayer[l].dry = 0;
+        plug->delayer[l].drystep = 0;
+        plug->delayer[l].sample_rate = sample_rate;
 
-    randlfo_init(&plug->dlfo, sample_rate, BLOCKMASK+1);
-    randlfo_init(&plug->fblfo, sample_rate, BLOCKMASK+1);
+        randlfo_init(&plug->delayer[l].dlfo, sample_rate, BLOCKMASK+1);
+        randlfo_init(&plug->delayer[l].fblfo, sample_rate, BLOCKMASK+1);
+    }
 
-    plug->sample_rate = sample_rate;
+    plug->stereo_p = NULL;
 
     return plug;
 }
@@ -173,6 +213,8 @@ void connect_bent_delay_ports(LV2_Handle handle, uint32_t port, void *data)
         PORT_CONNECT(7,fbrange_p);
         PORT_CONNECT(8,fbfreq_p);
         PORT_CONNECT(9,mix_p);
+        PORT_CONNECT(10,stereo_p);
+        PORT_CONNECT(11,outr_p);
     default:
         puts("UNKNOWN PORT YO!!");
     }
@@ -181,13 +223,29 @@ void connect_bent_delay_ports(LV2_Handle handle, uint32_t port, void *data)
 void cleanup_bent_delay(LV2_Handle handle)
 {
     plug_t* plug = (plug_t*)handle;
-    free(plug->buf);
+    free(plug->delayer[0].buf);
+    if(plug->stereo_p)
+    {
+        free(plug->delayer[1].buf);
+    }
+    free(plug->delayer);
     free(plug);
 }
 
 static const LV2_Descriptor bent_delay_descriptor=
 {
     "http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII",
+    init_bent_delay,
+    connect_bent_delay_ports,
+    0,//activate
+    run_bent_delay,
+    0,//deactivate
+    cleanup_bent_delay,
+    0//extension
+};
+static const LV2_Descriptor bent_delay_mono_descriptor=
+{
+    "http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono",
     init_bent_delay,
     connect_bent_delay_ports,
     0,//activate
@@ -204,6 +262,8 @@ const LV2_Descriptor* lv2_descriptor(uint32_t index)
     {
     case 0:
         return &bent_delay_descriptor;
+    case 1:
+        return &bent_delay_mono_descriptor;
     default:
         return 0;
     }
