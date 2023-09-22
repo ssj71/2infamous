@@ -121,7 +121,7 @@
                 lv2:index 10 ;
                 lv2:symbol "STEREO" ;
                 lv2:name "TableTennis" ;
-                lv2:default 0.0 ;
+                lv2:default -1.0 ;
                 lv2:minimum -1.0 ;
                 lv2:maximum 1.0 ;
         ] ;
@@ -236,7 +236,7 @@
         ].
 
 
-<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&dfault>
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&dfault>
 	a pset:Preset ;
 	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "01 Dfault" ;
@@ -266,7 +266,7 @@
 		pset:value 500.0
 	] .
 
-<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&warm>
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&warm>
 	a pset:Preset ;
 	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "02 warm_delay" ;
@@ -297,7 +297,7 @@
 	] .
 
 
-<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&colour>
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&colour>
 	a pset:Preset ;
 	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
 	rdfs:label "03 slap_of_colour" ;
@@ -327,10 +327,40 @@
 		pset:value 160.0
 	] .
 
-<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&chop_suey>
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&unreliable>
 	a pset:Preset ;
 	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
-	rdfs:label "04 chop_suey" ;
+	rdfs:label "04 unreliable" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 2.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.01
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value -0.15
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 0.8
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 200.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&chop_suey>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
+	rdfs:label "05 chop_suey" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
 		pset:value 0.0
@@ -357,10 +387,10 @@
 		pset:value 300.0
 	] .
 
-<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&dirty_chorus>
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&dirty_chorus>
 	a pset:Preset ;
 	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
-	rdfs:label "05 dirty_chorus" ;
+	rdfs:label "06 dirty_chorus" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
 		pset:value 7.0
@@ -387,10 +417,10 @@
 		pset:value 30.0
 	] .
 
-<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&space_case>
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&space_case>
 	a pset:Preset ;
 	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
-	rdfs:label "06 space_case" ;
+	rdfs:label "07 space_case" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
 		pset:value 100.0
@@ -417,10 +447,10 @@
 		pset:value 800.0
 	] .
 
-<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&seasick>
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono&seasick>
 	a pset:Preset ;
 	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono> ;
-	rdfs:label "07 seasick" ;
+	rdfs:label "08 seasick" ;
 	lv2:port [
 		lv2:symbol "DELAY_RANGE" ;
 		pset:value 10.0
@@ -442,6 +472,271 @@
 	] , [
 		lv2:symbol "RATE" ;
 		pset:value 0.1
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 150.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&dfault>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "01 Dfault" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 18.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.2
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value 0.75
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 0.2
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 0.3
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value -1.0
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 500.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&warm>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "02 warm_delay" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 10.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.1
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 0.2
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 0.3
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 400.0
+	] .
+
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&colour>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "03 slap_of_colour" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 6.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.7
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value -0.15
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 0.01
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.15
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 0.1
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 160.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&unreliable>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "04 unreliable" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 2.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.01
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value -0.15
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 0.8
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 200.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&chop_suey>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "05 chop_suey" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.01
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.3
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 15.0
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value -1.0
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 300.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&dirty_chorus>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "06 dirty_chorus" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 7.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.6
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value -0.35
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 0.1
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 8.0
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 30.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&space_case>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "07 space_case" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 100.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 0.05
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value 0.89999998
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 0.40000001
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.3
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 20.0
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "TIME" ;
+		pset:value 800.0
+	] .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII&seasick>
+	a pset:Preset ;
+	lv2:appliesTo <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII> ;
+	rdfs:label "08 seasick" ;
+	lv2:port [
+		lv2:symbol "DELAY_RANGE" ;
+		pset:value 10.0
+	] , [
+		lv2:symbol "DELAY_RATE" ;
+		pset:value 5.0
+	] , [
+		lv2:symbol "ENABLE" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "FB_AVG" ;
+		pset:value -0.5
+	] , [
+		lv2:symbol "FB_RANGE" ;
+		pset:value 0.01
+	] , [
+		lv2:symbol "MIX" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "RATE" ;
+		pset:value 0.1
+	] , [
+		lv2:symbol "STEREO" ;
+		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;
 		pset:value 150.0
