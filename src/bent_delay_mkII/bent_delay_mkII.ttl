@@ -130,7 +130,7 @@
                 lv2:index 11 ;
                 lv2:symbol "OUTPUT_R" ;
                 lv2:name "Audio R Out" ;
-        ].
+        ] .
 
 <http://ssj71.github.io/infamousPlugins/plugs.html#bent_delay_mkII_mono>
         a lv2:Plugin, lv2:DelayPlugin ;

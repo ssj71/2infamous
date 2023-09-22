@@ -1,4 +1,4 @@
-    //Spencer Jackson
+//Spencer Jackson
 //bent_delay.c
 #include<lv2.h>
 #include<stdlib.h>
