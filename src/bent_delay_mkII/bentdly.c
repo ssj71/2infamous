@@ -151,7 +151,7 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
         run_delayer(
             &plug->delayer[1],
             plug->in_p,
-            plug->out_p,
+            plug->outr_p,
             nframes,
             *plug->on_p>0.0?1.0:0.0,
             *plug->mix_p,
