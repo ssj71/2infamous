@@ -169,7 +169,7 @@ LV2_Handle init_bent_delay(const LV2_Descriptor *descriptor,double sample_rate, 
     uint32_t tmp;
 
     plug_t* plug = malloc(sizeof(plug_t));
-    uint8_t l = strlen(descriptor->URI)>76?2:1;
+    uint8_t l = strlen(descriptor->URI)>65?1:2;
     plug->delayer = malloc(sizeof(delayer_t)*l);
 
     tmp = 0x10000;
