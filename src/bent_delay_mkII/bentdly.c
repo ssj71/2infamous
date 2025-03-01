@@ -25,6 +25,9 @@ typedef struct _delayer
     float dry;
     float wstep;
     float drystep;
+    float fb2;
+    float fb2step;
+    float lvl;
 
     randlfo_t dlfo;
     randlfo_t fblfo;
@@ -45,6 +48,7 @@ typedef struct _BENTDELAY_MK_II
     float *fbrange_p;
     float *fbfreq_p;
     float *mix_p;
+    float *sense_p;
     float *stereo_p;
 } plug_t;
 
@@ -62,20 +66,23 @@ float cubic(float* buf, float i)
 
 }
 
-void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, float on, float mix, float fbl, float fbh, float fbf, float delay, float drange, float df)
+void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, float on, float mix, float fbl, float fbh, float fbf, float delay, float drange, float df, float thresh)
 {
-    float j,m;
+    float j,m,m2;
     double tmp;
     float* buf = delayer->buf;
     uint16_t w = delayer->w;
     float fb = delayer->fb;
     float fbstep = delayer->fbstep;
+    float fb2 = delayer->fb2;
+    float fb2step = delayer->fb2step;
     float dly = delayer->dly;
     float dstep = delayer->dstep;
     float wet = delayer->wet;
     float dry = delayer->dry;
     float wstep = delayer->wstep;
     float drystep = delayer->drystep;
+    float lvl = delayer->lvl;
 
     CLAMP(fbl, -1.0, 1.0);
     CLAMP(fbh, -1.0, 1.0);
@@ -85,13 +92,17 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
         //fractional delay
         j = (uint16_t)(w-dly) + modf(w-dly,&tmp);
         m = cubic(buf,j);
-        buf[w] = on*in[i] + fb*m;
+        j = (uint16_t)(w-dly/2.0) + modf(w-dly/2.0,&tmp);
+        m2 = cubic(buf,j);
+        buf[w] = on*in[i] + fb*m + fb2*m2;
         out[i] = dry*in[i] + wet*m;
         dly += dstep;
         fb += fbstep;
+        fb2 += fb2step;
         wet += wstep;
         dry += drystep;
         w++;
+        lvl = 0.8*lvl + 0.2*fabs(in[i]);
         if(!(w&BLOCKMASK))
         {
             //new block, new lfo out
@@ -111,6 +122,15 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
                 delayer->wet = 1.0;
                 delayer->dry = 2.0*(1.0-mix);
             }
+            if(lvl > thresh)
+            {
+                delayer->fb2 = delayer->fb;
+            }
+            else
+            {
+                delayer->fb2 = 0.0;
+            }
+            fb2step = (delayer->fb2 - fb2)/(float)(BLOCKMASK+1.0);
             wstep = (delayer->wet - wet)/(float)(BLOCKMASK+1.0);
             drystep = (delayer->dry - dry)/(float)(BLOCKMASK+1.0);
         }
@@ -119,12 +139,15 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
     delayer->w = w;
     delayer->fb = fb;
     delayer->fbstep = fbstep;
+    delayer->fb2 = fb2;
+    delayer->fb2step = fb2step;
     delayer->dly = dly;
     delayer->dstep = dstep;
     delayer->wet = wet;
     delayer->dry = dry;
     delayer->wstep = wstep;
     delayer->drystep = drystep;
+    delayer->lvl = lvl;
 
     return;
 }
@@ -146,7 +169,8 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
         *plug->fbfreq_p,
         *plug->dly_p,
         *plug->drange_p,
-        *plug->dfreq_p);
+        *plug->dfreq_p,
+	    1.0-*plug->sense_p);
     if(plug->stereo_p)
         run_delayer(
             &plug->delayer[1],
@@ -160,7 +184,8 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
             *plug->fbfreq_p,
             *plug->dly_p*3.0/(3.0-*plug->stereo_p),
             *plug->drange_p,
-            *plug->dfreq_p);
+            *plug->dfreq_p,
+            1.0-*plug->sense_p);
     return;
 }
 
@@ -187,6 +212,7 @@ LV2_Handle init_bent_delay(const LV2_Descriptor *descriptor,double sample_rate, 
         plug->delayer[l].wstep = 0;
         plug->delayer[l].dry = 0;
         plug->delayer[l].drystep = 0;
+        plug->delayer[l].lvl = 0;
         plug->delayer[l].sample_rate = sample_rate;
 
         randlfo_init(&plug->delayer[l].dlfo, sample_rate, BLOCKMASK+1);
@@ -214,7 +240,8 @@ void connect_bent_delay_ports(LV2_Handle handle, uint32_t port, void *data)
         PORT_CONNECT(8,fbfreq_p);
         PORT_CONNECT(9,mix_p);
         PORT_CONNECT(10,stereo_p);
-        PORT_CONNECT(11,outr_p);
+        PORT_CONNECT(11,sense_p);
+        PORT_CONNECT(12,outr_p);
     default:
         puts("UNKNOWN PORT YO!!");
     }
