@@ -23,9 +23,6 @@ typedef struct _OK_SAT
     float *in_p;
     float *out_p;
     float *sat_p;
-    float *test_p;
-    float *test2_p;
-    float *outctl_p;
 
     rms_calc_t prerms;
     rms_calc_t postrms;
@@ -106,7 +103,6 @@ void run_ok_sat(LV2_Handle handle, uint32_t nframes)
     plug->bc = blockcount;
     plug->pout = pout;
     plug->pin = pin;
-    *plug->outctl_p = gainout; //display for test
 
     return;
 }
@@ -133,9 +129,6 @@ void connect_ok_sat_ports(LV2_Handle handle, uint32_t port, void *data)
         PORT_CONNECT(0,in_p);
         PORT_CONNECT(1,out_p);
         PORT_CONNECT(2,sat_p);
-        PORT_CONNECT(3,test_p);
-        PORT_CONNECT(4,test2_p);
-        PORT_CONNECT(5,outctl_p);
     default:
         puts("UNKNOWN PORT YO!!");
     }
