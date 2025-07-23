@@ -244,7 +244,7 @@
         ], [
                 a lv2:InputPort, lv2:ControlPort ;
                 lv2:index 10 ;
-                lv2:symbol "THRESH" ;
+                lv2:symbol "SENSE" ;
                 lv2:name "Touchyness" ;
                 lv2:default 0.0 ;
                 lv2:minimum 0.0 ;
@@ -278,6 +278,9 @@
 		lv2:symbol "RATE" ;
 		pset:value 0.3
 	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "TIME" ;
 		pset:value 500.0
 	] .
@@ -307,6 +310,9 @@
 	] , [
 		lv2:symbol "RATE" ;
 		pset:value 0.3
+	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.5
 	] , [
 		lv2:symbol "TIME" ;
 		pset:value 400.0
@@ -339,6 +345,9 @@
 		lv2:symbol "RATE" ;
 		pset:value 0.1
 	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "TIME" ;
 		pset:value 160.0
 	] .
@@ -368,6 +377,9 @@
 	] , [
 		lv2:symbol "RATE" ;
 		pset:value 0.8
+	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;
 		pset:value 200.0
@@ -399,6 +411,9 @@
 		lv2:symbol "RATE" ;
 		pset:value 15.0
 	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "TIME" ;
 		pset:value 300.0
 	] .
@@ -428,6 +443,9 @@
 	] , [
 		lv2:symbol "RATE" ;
 		pset:value 8.0
+	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;
 		pset:value 30.0
@@ -459,6 +477,9 @@
 		lv2:symbol "RATE" ;
 		pset:value 20.0
 	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "TIME" ;
 		pset:value 800.0
 	] .
@@ -488,6 +509,9 @@
 	] , [
 		lv2:symbol "RATE" ;
 		pset:value 0.1
+	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;
 		pset:value 150.0
@@ -520,7 +544,10 @@
 		pset:value 0.3
 	] , [
 		lv2:symbol "STEREO" ;
-		pset:value -1.0
+		pset:value 0.0
+	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;
 		pset:value 500.0
@@ -554,6 +581,9 @@
 	] , [
 		lv2:symbol "STEREO" ;
 		pset:value 0.0
+	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.5
 	] , [
 		lv2:symbol "TIME" ;
 		pset:value 400.0
@@ -589,6 +619,9 @@
 		lv2:symbol "STEREO" ;
 		pset:value 0.0
 	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "TIME" ;
 		pset:value 160.0
 	] .
@@ -620,6 +653,9 @@
 		pset:value 0.8
 	] , [
 		lv2:symbol "STEREO" ;
+		pset:value 1.0
+	] , [
+        lv2:symbol "SENSE" ;
 		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;
@@ -655,6 +691,9 @@
 		lv2:symbol "STEREO" ;
 		pset:value -1.0
 	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "TIME" ;
 		pset:value 300.0
 	] .
@@ -686,6 +725,9 @@
 		pset:value 8.0
 	] , [
 		lv2:symbol "STEREO" ;
+		pset:value 0.0
+	] , [
+        lv2:symbol "SENSE" ;
 		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;
@@ -721,6 +763,9 @@
 		lv2:symbol "STEREO" ;
 		pset:value 1.0
 	] , [
+        lv2:symbol "SENSE" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "TIME" ;
 		pset:value 800.0
 	] .
@@ -752,6 +797,9 @@
 		pset:value 0.1
 	] , [
 		lv2:symbol "STEREO" ;
+		pset:value 0.0
+	] , [
+        lv2:symbol "SENSE" ;
 		pset:value 0.0
 	] , [
 		lv2:symbol "TIME" ;

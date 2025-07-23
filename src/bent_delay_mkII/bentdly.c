@@ -92,17 +92,23 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
         //fractional delay
         j = (uint16_t)(w-dly) + modf(w-dly,&tmp);
         m = cubic(buf,j);
+        //half time delay
         j = (uint16_t)(w-dly/2.0) + modf(w-dly/2.0,&tmp);
         m2 = cubic(buf,j);
-        buf[w] = on*in[i] + fb*m + fb2*m2;
-        out[i] = dry*in[i] + wet*m;
+        buf[w] = on*in[i] + fb*m;
+        out[i] = dry*in[i] + wet*(m + fb2*m2);
         dly += dstep;
         fb += fbstep;
         fb2 += fb2step;
         wet += wstep;
         dry += drystep;
         w++;
-        lvl = 0.8*lvl + 0.2*fabs(in[i]);
+        //lvl = 0.00007*lvl + 0.99993*fabs(in[i]); //approx. VU meter
+        j = fabs(in[i]);
+        if(j > lvl)
+            lvl = j;
+        else
+            lvl *= 0.99999;
         if(!(w&BLOCKMASK))
         {
             //new block, new lfo out
@@ -239,8 +245,8 @@ void connect_bent_delay_ports(LV2_Handle handle, uint32_t port, void *data)
         PORT_CONNECT(7,fbrange_p);
         PORT_CONNECT(8,fbfreq_p);
         PORT_CONNECT(9,mix_p);
-        PORT_CONNECT(10,stereo_p);
-        PORT_CONNECT(11,sense_p);
+        PORT_CONNECT(10,sense_p);
+        PORT_CONNECT(11,stereo_p);
         PORT_CONNECT(12,outr_p);
     default:
         puts("UNKNOWN PORT YO!!");
