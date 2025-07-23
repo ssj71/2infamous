@@ -66,9 +66,9 @@ float cubic(float* buf, float i)
 
 }
 
-void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, float on, float mix, float fbl, float fbh, float fbf, float delay, float drange, float df, float thresh)
+void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, float on, float mix, float fbl, float fbh, float fbf, float delay, float drange, float df, float thresh, float pp)
 {
-    float j,m,m2;
+    float j,m,m2,mr;
     double tmp;
     float* buf = delayer->buf;
     uint16_t w = delayer->w;
@@ -95,15 +95,17 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
         //half time delay
         j = (uint16_t)(w-dly/2.0) + modf(w-dly/2.0,&tmp);
         m2 = cubic(buf,j);
+        //write (fb) delay (for ping-pong)
+        j = (uint16_t)(w-dly/pp) + modf(w-dly/pp,&tmp);
+        mr = cubic(buf,j);
         buf[w] = on*in[i] + fb*m;
-        out[i] = dry*in[i] + wet*(m + fb2*m2);
+        out[i] = dry*in[i] + wet*(mr + fb2*m2);
         dly += dstep;
         fb += fbstep;
         fb2 += fb2step;
         wet += wstep;
         dry += drystep;
         w++;
-        //lvl = 0.00007*lvl + 0.99993*fabs(in[i]); //approx. VU meter
         j = fabs(in[i]);
         if(j > lvl)
             lvl = j;
@@ -176,22 +178,43 @@ void run_bent_delay(LV2_Handle handle, uint32_t nframes)
         *plug->dly_p,
         *plug->drange_p,
         *plug->dfreq_p,
-	    1.0-*plug->sense_p);
+	    1.0-*plug->sense_p,
+        1.0);
     if(plug->stereo_p)
-        run_delayer(
-            &plug->delayer[1],
-            plug->in_p,
-            plug->outr_p,
-            nframes,
-            *plug->on_p>0.0?1.0:0.0,
-            *plug->mix_p,
-            *plug->fb_p - *plug->fbrange_p,
-            *plug->fb_p + *plug->fbrange_p,
-            *plug->fbfreq_p,
-            *plug->dly_p*3.0/(3.0-*plug->stereo_p),
-            *plug->drange_p,
-            *plug->dfreq_p,
-            1.0-*plug->sense_p);
+    {
+        if(plug->stereo_p[0]<0.0)
+            run_delayer(
+                &plug->delayer[1],
+                plug->in_p,
+                plug->outr_p,
+                nframes,
+                *plug->on_p>0.0?1.0:0.0,
+                *plug->mix_p,
+                *plug->fb_p - *plug->fbrange_p,
+                *plug->fb_p + *plug->fbrange_p,
+                *plug->fbfreq_p,
+                *plug->dly_p*4.0/(4.0-*plug->stereo_p),
+                *plug->drange_p,
+                *plug->dfreq_p,
+                1.0-*plug->sense_p,
+                1.0);
+        else
+            run_delayer(
+                &plug->delayer[1],
+                plug->in_p,
+                plug->outr_p,
+                nframes,
+                *plug->on_p>0.0?1.0:0.0,
+                *plug->mix_p,
+                *plug->fb_p - *plug->fbrange_p,
+                *plug->fb_p + *plug->fbrange_p,
+                *plug->fbfreq_p,
+                *plug->dly_p,
+                *plug->drange_p,
+                *plug->dfreq_p,
+                1.0-*plug->sense_p,
+                1.0+*plug->stereo_p);
+    }
     return;
 }
 
