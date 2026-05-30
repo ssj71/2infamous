@@ -6,6 +6,7 @@
 #include<string.h>
 #include<math.h>
 #include"randlfo.h"
+#include"envfollow.h"
 
 #define PORT_CONNECT(N,PORT) case N: plug->PORT = (float*)data; break
 #define CLAMP(X,MIN,MAX) X = X<MIN?MIN:(X>MAX?MAX:X)
@@ -16,6 +17,7 @@ typedef struct _delayer
 {
     uint16_t w; //write index
     uint16_t dly;
+    int32_t time;
     float dstep;
     float fb;
     float fbstep;
@@ -31,6 +33,7 @@ typedef struct _delayer
 
     randlfo_t dlfo;
     randlfo_t fblfo;
+    envfollow_t env;
 } delayer_t;
 
 typedef struct _BENTDELAY_MK_II
@@ -76,13 +79,14 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
     float fbstep = delayer->fbstep;
     float fb2 = delayer->fb2;
     float fb2step = delayer->fb2step;
+    int32_t time = delayer->time;
     float dly = delayer->dly;
     float dstep = delayer->dstep;
     float wet = delayer->wet;
     float dry = delayer->dry;
     float wstep = delayer->wstep;
     float drystep = delayer->drystep;
-    float lvl = delayer->lvl;
+    float lvl = delayer->env.o;
 
     CLAMP(fbl, -1.0, 1.0);
     CLAMP(fbh, -1.0, 1.0);
@@ -106,11 +110,7 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
         wet += wstep;
         dry += drystep;
         w++;
-        j = fabs(in[i]);
-        if(j > lvl)
-            lvl = j;
-        else
-            lvl *= 0.99999;
+        lvl = envfollow_out(&delayer->env, in[i]);
         if(!(w&BLOCKMASK))
         {
             //new block, new lfo out
@@ -131,11 +131,15 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
                 delayer->dry = 2.0*(1.0-mix);
             }
             if(lvl > thresh)
+                time = 6.0*delay*delayer->sample_rate/1000.0;
+            time -= BLOCKMASK+1;
+            if(time > 0)
             {
                 delayer->fb2 = delayer->fb;
             }
             else
             {
+                time = 0;
                 delayer->fb2 = 0.0;
             }
             fb2step = (delayer->fb2 - fb2)/(float)(BLOCKMASK+1.0);
@@ -149,13 +153,13 @@ void run_delayer(delayer_t* delayer, float* in, float* out, uint16_t nframes, fl
     delayer->fbstep = fbstep;
     delayer->fb2 = fb2;
     delayer->fb2step = fb2step;
+    delayer->time = time;
     delayer->dly = dly;
     delayer->dstep = dstep;
     delayer->wet = wet;
     delayer->dry = dry;
     delayer->wstep = wstep;
     delayer->drystep = drystep;
-    delayer->lvl = lvl;
 
     return;
 }
