@@ -23,3 +23,4 @@ typedef struct envfollow_t_
 }envfollow_t;
 
 void envfollow_init(envfollow_t *follower, double sample_rate);
+float envfollow_out(envfollow_t *follower, float x);
