@@ -1,0 +1,8 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#noscillator>
+        a lv2:Plugin, lv2:OscillatorPlugin ;
+        lv2:binary <noscillator.so> ;
+        rdfs:seeAlso <noscillator.ttl> .

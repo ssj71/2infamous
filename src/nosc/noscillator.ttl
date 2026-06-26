@@ -1,0 +1,110 @@
+@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+@prefix lv2:     <http://lv2plug.in/ns/lv2core#> .
+@prefix lv2ui:   <http://lv2plug.in/ns/extensions/ui#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix lv2atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix lv2midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix lv2time: <http://lv2plug.in/ns/ext/time#> .
+@prefix pg: <http://lv2plug.in/ns/ext/port-groups#> .
+@prefix param: <http://lv2plug.in/ns/ext/parameters#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix pprops: <http://lv2plug.in/ns/ext/port-props#> .
+
+
+<http://ssj71.github.io/infamousPlugins/plugs.html#noscillator>
+        a lv2:Plugin, lv2:OscillatorPlugin ;
+        doap:name "the infamous noscillator" ;
+        doap:license <http://opensource.org/licenses/GPL-3.0> ;
+        doap:description "not an analog oscillator";
+        doap:maintainer [
+                foaf:name "Spencer Jackson" ;
+                foaf:homepage <http://ssj71.github.io/infamousPlugins> ;
+                foaf:mbox <mailto:ssjackson71@gmail.com> ;
+        ] ;
+        lv2:minorVersion 0 ;
+        lv2:microVersion 1 ;
+        rdfs:comment "not an analog oscillator" ;
+        lv2:optionalFeature lv2:hardRTCapable ;
+
+        lv2:port [
+                a lv2:OutputPort, lv2:AudioPort ;
+                lv2:index 0 ;
+                lv2:symbol "OUTPUT" ;
+                lv2:name "Audio Out" ;
+        ] ;
+        lv2:port [
+                a lv2:InputPort, lv2:CVPort ;
+                lv2:index 1 ;
+                lv2:symbol "FREQ" ;
+                lv2:name "Frequency" ;
+        ] ;
+        lv2:port [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 2 ;
+                lv2:symbol "ENABLE" ;
+                lv2:name "ON" ;
+                lv2:default 1 ;
+                lv2:minimum 0 ;
+                lv2:maximum 1 ;
+                lv2:portProperty lv2:integer ;
+                lv2:portProperty lv2:toggled ;
+                lv2:designation lv2:enabled ;
+        ] ;
+        lv2:port [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 3 ;
+                lv2:symbol "OCT" ;
+                lv2:name "Octave Shift" ;
+                lv2:default 3.0 ;
+                lv2:minimum -3.0 ;
+                lv2:maximum 7.0 ;
+                lv2:portProperty lv2:integer ;
+                units:unit units:oct ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 4 ;
+                lv2:symbol "CENT" ;
+                lv2:name "Cent Detune" ;
+                lv2:default 0.0 ;
+                lv2:minimum -600.0 ;
+                lv2:maximum 600.0 ;
+                units:unit units:cent ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 5 ;
+                lv2:symbol "RICH" ;
+                lv2:name "Richness" ;
+                lv2:default 0.0 ;
+                lv2:minimum -2.5 ;
+                lv2:maximum 2.5 ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 6 ;
+                lv2:symbol "HOLLOW" ;
+                lv2:name "Hollow" ;
+                lv2:default 0 ;
+                lv2:minimum 0 ;
+                lv2:maximum 1 ;
+                lv2:portProperty lv2:integer ;
+                lv2:portProperty lv2:toggled ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 7 ;
+                lv2:symbol "HSHARP" ;
+                lv2:name "Hollow Sharpness" ;
+                lv2:default 1.5 ;
+                lv2:minimum 0.5 ;
+                lv2:maximum 2.5 ;
+        ], [
+                a lv2:InputPort, lv2:ControlPort ;
+                lv2:index 8 ;
+                lv2:symbol "WARM" ;
+                lv2:name "Warmth" ;
+                lv2:default 0.5 ;
+                lv2:minimum 0.0 ;
+                lv2:maximum 1.0 ;
+        ] .
