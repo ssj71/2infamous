@@ -135,7 +135,7 @@ LV2_Handle init_nosc(const LV2_Descriptor *descriptor,double sample_rate, const 
     plug->nosc.prev = 0.0;
     plug->nosc.samplerate = (float)sample_rate;
 
-    randlfo_init(&plug->nosc.lfo, sample_rate);
+    randlfo_init(&plug->nosc.lfo, sample_rate, true);
 
     return plug;
 }
